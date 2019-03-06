@@ -19,12 +19,23 @@ def get_user_info(user_id):
 
 
 @itchat.msg_register(itchat.content.TEXT)
-def print_content(msg):
+def text_handler(msg):
     print(">>>> {0} : {1}".format(msg['User']['NickName'], msg['Text']))
 
     reply = get_response(msg)
     defaultReply = "收到，稍后给您回复"
     return reply or defaultReply
+
+
+@itchat.msg_register(itchat.content.VOICE)
+def voice_handler(msg):
+    pass
+
+
+@itchat.msg_register(itchat.content.PICTURE)
+def picture_handler(msg):
+    defaultReply = "对不起，我现在还看不懂图片哦"
+    return defaultReply
 
 
 # 开启暂存登陆状态
