@@ -35,8 +35,8 @@ class NotificationApi(Resource):
         req_json = request.get_json()
         print(">>>> 向群聊: {} 发送构建结果通知".format(req_json['groupName']))
         wx_group = bot.groups().search(req_json['groupName'])[0]
-        send_msg = '服务: {0} 构建结果: {1}\r\n版本: {2}'\
-            .format(req_json['serviceName'], req_json['buildResult'], req_json['version'])
+        send_msg = '服务: {0} \r\n构建结果: {1}\r\n版本: {2}\r\n修改信息: {3}'\
+            .format(req_json['serviceName'], req_json['buildResult'], req_json['version'], req_json['commitMsg'])
         wx_group.send(send_msg)
 
 
