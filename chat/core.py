@@ -63,12 +63,6 @@ def text_handler(msg):
     default_reply = "收到，稍后给您回复"
     return reply or default_reply
 
-
-@itchat.msg_register(itchat.content.VOICE)
-def voice_handler(msg):
-    pass
-
-
 @itchat.msg_register(itchat.content.PICTURE)
 def picture_handler(msg):
     default_reply = "对不起，我现在还看不懂图片哦"
