@@ -1,12 +1,15 @@
 from flask import *
-from flask_restful import Api, Resource, reqparse
+from flask_restful import Api, Resource
 from wxpy import *
+import pickle
 
 app = Flask(__name__)
 api = Api(app)
 
 
 bot = Bot(cache_path=True, console_qr=True)
+
+principal_file = 'principal.pkl'
 
 
 @bot.register(Friend, TEXT)
@@ -30,7 +33,7 @@ def friend_msg_handler(msg):
 #     new_friends.send('我们是同志了')
 
 
-class NotificationApi(Resource):
+class NotifyGroupApi(Resource):
     def post(self):
         req_json = request.get_json()
         print(">>>> 向群聊: {} 发送构建结果通知".format(req_json['groupName']))
@@ -40,7 +43,19 @@ class NotificationApi(Resource):
         wx_group.send(send_msg)
 
 
-api.add_resource(NotificationApi, '/wx/notify', endpoint='notify')
+class NotifyFriendApi(Resource):
+    def post(self):
+        req_json = request.get_json()
+        print(">>>> 服务: {} 构建失败，向负责人发送通知通知".format(req_json['serviceName']))
+        principal_dict = pickle.load(open(principal_file, 'rb'), encoding='utf-8')
+        principal = principal_dict[req_json['serviceName']]
+
+        wx_friend = bot.friends().search(principal)[0]
+        wx_friend.send(req_json['msg'])
+
+
+api.add_resource(NotifyGroupApi, '/wx/notify/group', endpoint='group')
+api.add_resource(NotifyFriendApi, '/wx/notify/friend', endpoint='friend')
 
 # @app.route('/wx/alter/<string:group_name>', methods=['POST'])
 # def send_msg_to_group(group_name):
