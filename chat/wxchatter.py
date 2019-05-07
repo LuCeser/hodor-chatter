@@ -1,3 +1,5 @@
+import os
+
 from flask import *
 from flask_restful import Api, Resource
 from wxpy import *
@@ -10,6 +12,7 @@ api = Api(app)
 bot = Bot(cache_path=True, console_qr=True)
 
 principal_file = 'principal.pkl'
+build_log = 'build_log.pkl'
 
 
 # @bot.register(Friend, TEXT)
@@ -40,10 +43,25 @@ class BuildInfoApi(Resource):
     """
         req_json = request.get_json()
         print(">>> 服务: {} 构建结果: {}".format(req_json['serviceName'], req_json['buildResult']))
+        self.persistance_log(req_json)
         if req_json['buildResult']:
             self.notify_build_success(req_json)
         else:
             self.notify_build_failure(req_json)
+
+    @staticmethod
+    def persistance_log(build_info):
+        """
+        记录日志
+        :param build_info:
+        :return:
+        """
+        build_infos = []
+        if os.path.exists(build_log):
+            build_infos = pickle.load(open(build_log, 'rb'), encoding='utf-8')
+
+        build_infos.append(build_info)
+        pickle.dump(build_infos, open(build_log, 'wb'))
 
     def notify_build_success(self, build_info):
         """
