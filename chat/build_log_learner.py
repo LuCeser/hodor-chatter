@@ -4,7 +4,6 @@ from configparser import ConfigParser
 
 import pymysql
 
-
 build_log = 'build_log.pkl'
 
 
@@ -18,10 +17,11 @@ class BuildLog(object):
         self.db_password = cfg.get('db_info', 'db_password')
         self.db_name = cfg.get('db_info', 'db_name')
 
-    def load_log(self, path):
+    @staticmethod
+    def load_log(path):
         """
         记录日志
-        :param build_info:
+        :param path: 本地结果路径
         :return:
         """
         build_infos = []
@@ -29,7 +29,6 @@ class BuildLog(object):
             build_infos = pickle.load(open(build_log, 'rb'), encoding='utf-8')
 
         return build_infos
-
 
     def insert_build_log(self, log):
         """
@@ -74,6 +73,3 @@ class BuildLog(object):
         cfg.read('config.ini')
         return cfg
 
-
-log_writer = BuildLog()
-log_writer.load_log(build_log)
