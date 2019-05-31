@@ -59,13 +59,15 @@ class BuildLog(object):
                    log.get('lastAuthor'), log['commitLog'], 0, '')
 
         try:
-            ret = cursor.execute(sql)
+            cursor.execute(sql)
             db.commit()
-            print(ret)
+            print("插入结果完成, 返回")
+            return True
         except:
             print('插入数据失败')
-
-        db.close()
+            return False
+        finally:
+            db.close()
 
     def read_config(self):
         cfg = ConfigParser()

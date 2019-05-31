@@ -5,11 +5,14 @@ from flask_restful import Api, Resource
 from wxpy import *
 import pickle
 
+from chat.build_log_learner import BuildLog
+
 app = Flask(__name__)
 api = Api(app)
 
 
 bot = Bot(cache_path=True, console_qr=True)
+build_logger = BuildLog()
 
 principal_file = 'principal.pkl'
 build_log = 'build_log.pkl'
@@ -56,12 +59,12 @@ class BuildInfoApi(Resource):
         :param build_info:
         :return:
         """
-        build_infos = []
-        if os.path.exists(build_log):
-            build_infos = pickle.load(open(build_log, 'rb'), encoding='utf-8')
-
-        build_infos.append(build_info)
-        pickle.dump(build_infos, open(build_log, 'wb'))
+        is_inserted = build_logger.insert_build_log(build_info)
+        if not is_inserted:
+            if os.path.exists(build_log):
+                build_infos = pickle.load(open(build_log, 'rb'), encoding='utf-8')
+                build_infos.append(build_info)
+                pickle.dump(build_infos, open(build_log, 'wb'))
 
     def notify_build_success(self, build_info):
         """
