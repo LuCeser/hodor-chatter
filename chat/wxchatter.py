@@ -5,7 +5,7 @@ from flask_restful import Api, Resource
 from wxpy import *
 import pickle
 
-from chat.build_log_learner import BuildLog
+from build_log_learner import BuildLog
 
 app = Flask(__name__)
 api = Api(app)
@@ -16,16 +16,6 @@ build_logger = BuildLog()
 
 principal_file = 'principal.pkl'
 build_log = 'build_log.pkl'
-
-
-# @bot.register(Friend, TEXT)
-# def friend_msg_handler(msg):
-#     """
-#     处理好友消息
-#     :param msg:
-#     :return:
-#     """
-#     print(">>>>> 收到 {} : {}".format(msg.sender.name, msg.text))
 
 
 class BuildInfoApi(Resource):
@@ -94,10 +84,10 @@ class BuildInfoApi(Resource):
     @staticmethod
     def notify_wx_group(group_name, msg):
         print("<<< {}".format(msg))
-        wx_groups = bot.groups(update=True).search(group_name)
-        if wx_groups:
-            wx_groups[0].send(msg)
-        else:
+        try:
+            group_receiver = ensure_one(bot.groups(update=True).search(group_name))
+            group_receiver.send(msg)
+        except ValueError:
             print("找不到群聊 {}".format(group_name))
 
     @staticmethod

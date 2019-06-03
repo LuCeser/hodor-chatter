@@ -68,7 +68,8 @@ class BuildLog(object):
         finally:
             db.close()
 
-    def read_config(self):
+    @staticmethod
+    def read_config():
         cfg = ConfigParser()
         cfg.read('config.ini')
         return cfg
