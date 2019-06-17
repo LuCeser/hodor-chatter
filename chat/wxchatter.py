@@ -10,8 +10,8 @@ from build_log_learner import BuildLog
 app = Flask(__name__)
 api = Api(app)
 
+bot = None
 
-bot = Bot(cache_path=True, console_qr=True)
 build_logger = BuildLog()
 
 principal_file = 'principal.pkl'
@@ -104,3 +104,4 @@ api.add_resource(BuildInfoApi, '/wx/info', endpoint='cd')
 
 if __name__ == '__main__':
     app.run(debug=True, host="0.0.0.0")
+    bot = Bot(console_qr=True, cache_path=True)
