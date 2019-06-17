@@ -1,5 +1,7 @@
 import os
 import pickle
+import sys
+import traceback
 from configparser import ConfigParser
 
 import pymysql
@@ -55,7 +57,7 @@ class BuildLog(object):
         VALUES 
         ('{}', '{}', '{}', '{}', {}, '{}', '{}', {}, '{}');
         """.format(log['buildTime'], log['serviceName'], log['lastCommit'], log['imageName'], result,
-                   log.get('lastAuthor'), log['commitLog'], 0, '')
+                   log.get('lastAuthor'), str(log['commitLog']), 0, '')
 
         try:
             cursor.execute(sql)
@@ -64,6 +66,7 @@ class BuildLog(object):
             return True
         except:
             print('插入数据失败')
+            traceback.print_exc(file=sys.stdout)
             return False
         finally:
             db.close()
